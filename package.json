@@ -1,0 +1,42 @@
+{
+  "name": "hrs-socialwallapi",
+  "version": "1.0.0",
+  "description": "The API to handle All SocialWall react library features.",
+  "main": "app.js",
+  "scripts": {
+    "start": "set DEBUG=app && node app.js",
+    "lint": "eslint --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Health-Record-Stack/SocialWallAPI.git"
+  },
+  "keywords": [
+    "healthrecordstack",
+    "socialwallapi",
+    "socialwall"
+  ],
+  "author": "Sanish Joseph",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Health-Record-Stack/SocialWallAPI/issues"
+  },
+  "homepage": "https://github.com/Health-Record-Stack/SocialWallAPI#readme",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "express-validator": "^6.4.0",
+    "mongoose": "^5.9.9",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "mocha": "^7.1.1",
+    "nodemon": "^2.0.3",
+    "nyc": "^15.0.1"
+  }
+}
