@@ -26,10 +26,12 @@
   "homepage": "https://github.com/Health-Record-Stack/SocialWallAPI#readme",
   "dependencies": {
     "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.4.0",
     "mongoose": "^5.9.9",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "rotating-file-stream": "^2.0.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",

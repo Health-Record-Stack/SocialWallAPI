@@ -1,8 +1,15 @@
 const express = require("express");
-const { fetchSocialwallItems } = require("../controllers/socialwallController");
+const SocialwallController = require("../controllers/socialwallController");
 
 const socialwallRouter = express.Router();
 
-socialwallRouter.get("/socialwalls", fetchSocialwallItems);
+function routes(SocialwallDetails) {
+  socialwallRouter.get(
+    "/socialwalls",
+    SocialwallController(SocialwallDetails).fetchSocialwallItems,
+  );
 
-module.exports = socialwallRouter;
+  return socialwallRouter;
+}
+
+module.exports = routes;
