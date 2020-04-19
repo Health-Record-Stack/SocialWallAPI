@@ -4,9 +4,10 @@
   "description": "The API to handle All SocialWall react library features.",
   "main": "app.js",
   "scripts": {
-    "start": "set DEBUG=app && node app.js",
+    "start": "set DEBUG=app && nodemon app.js",
     "lint": "eslint --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --timeout 10000 --exit --report lcovonly -- -R spec",
+    "coverage": "nyc --reporter=html --reporter=text npm test"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "eslint-plugin-import": "^2.20.2",
     "mocha": "^7.1.1",
     "nodemon": "^2.0.3",
-    "nyc": "^15.0.1"
+    "nyc": "^15.0.1",
+    "sinon": "^9.0.2"
   }
 }
