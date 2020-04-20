@@ -1,9 +1,10 @@
+const { validationResult } = require("express-validator");
 const apiResponse = require("../helpers/apiResponse");
 
 function SocialwallController(SocialwallDetails) {
   const fetchSocialwallItems = (req, res) => {
     const query = {
-      $or: [{ ishidden: { $exists: false } }, { ishidden: false }],
+      $or1: [{ ishidden: { $exists: false } }, { ishidden: false }],
       // eslint-disable-next-line no-dupe-keys
       $or: [{ isdeleted: { $exists: false } }, { isdeleted: false }],
     };
@@ -23,7 +24,37 @@ function SocialwallController(SocialwallDetails) {
       });
   };
 
-  return { fetchSocialwallItems };
+  const fetchSocialwallItemById = (req, res) => {
+    const query = {
+      _id: req.params.id,
+    };
+
+    return SocialwallDetails.findOne(query)
+      .then((dbRes) => {
+        apiResponse.successResponseWithData(res, "Fetch Succeeded", dbRes);
+      })
+      .catch((e) => {
+        apiResponse.ErrorResponse(res, "DB fetch failed");
+        throw e;
+      });
+  };
+
+  const addSocialwallItems = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return apiResponse.validationError(res, errors);
+    }
+
+    // Inser to server
+    return SocialwallDetails.insertMany(
+      req.body.socialwallitems,
+      (error, docs) => {
+        apiResponse.successResponseWithData(res, "Insert Succeeded", docs);
+      }
+    );
+  };
+
+  return { fetchSocialwallItems, fetchSocialwallItemById, addSocialwallItems };
 }
 
 module.exports = SocialwallController;

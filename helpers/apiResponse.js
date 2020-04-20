@@ -31,6 +31,14 @@ exports.notFoundResponse = (res, msg) => {
   return res.status(404).json(data);
 };
 
+exports.validationError = (res, msg) => {
+  const resData = {
+    status: 0,
+    message: msg,
+  };
+  return res.status(422).json(resData);
+};
+
 exports.validationErrorWithData = (res, msg, data) => {
   const resData = {
     status: 0,

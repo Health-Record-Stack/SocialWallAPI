@@ -11,6 +11,7 @@ const morganSettings = require("./helpers/morganConfig");
 const SocialwallDetails = require("./models/socialwalldetailModel");
 
 const app = express();
+app.use(express.json());
 
 const socialwallRouter = require("./routes/socialwallRoutes");
 
