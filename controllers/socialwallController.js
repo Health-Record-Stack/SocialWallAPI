@@ -48,19 +48,53 @@ function SocialwallController(SocialwallDetails) {
     }
 
     // Inser to server
-    return SocialwallDetails.insertMany(
-      req.body.socialwallitems,
-      (error, docs) => {
-        if (error) {
-          apiResponse.ErrorResponse(res, "Insert failed");
-          logger.error(error);
-        }
-        apiResponse.successResponseWithData(res, "Insert Succeeded", docs);
-      },
-    );
+    return SocialwallDetails.insertMany(req.body.socialwallitems, (e, docs) => {
+      if (e) {
+        apiResponse.ErrorResponse(res, "Insert failed");
+        logger.error(e);
+      }
+      apiResponse.successResponseWithData(res, "Insert Succeeded", docs);
+    });
   };
 
-  return { fetchSocialwallItems, fetchSocialwallItemById, addSocialwallItems };
+  const patchSocialwallItem = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return apiResponse.validationError(res, errors);
+    }
+    // Patch values
+    const query = {
+      _id: req.params.id,
+    };
+    return SocialwallDetails.findOne(query)
+      .then((dbRes) => {
+        const socialwallitem = dbRes;
+        Object.entries(req.body).forEach((item) => {
+          const key = item[0];
+          const val = item[1];
+          socialwallitem[key] = val;
+        });
+        socialwallitem.save((e) => {
+          if (e) {
+            apiResponse.ErrorResponse(res, "Update failed");
+            logger.error(e);
+          } else {
+            apiResponse.successResponseWithData(res, "Update Succeeded", socialwallitem);
+          }
+        });
+      })
+      .catch((e) => {
+        apiResponse.ErrorResponse(res, "Update failed");
+        logger.error(e);
+      });
+  };
+
+  return {
+    fetchSocialwallItems,
+    fetchSocialwallItemById,
+    addSocialwallItems,
+    patchSocialwallItem,
+  };
 }
 
 module.exports = SocialwallController;
