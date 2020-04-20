@@ -18,7 +18,22 @@ function SocialwallController(SocialwallDetails) {
       .skip(skip)
       .sort({ createdon: -1 })
       .then((dbRes) => {
-        apiResponse.successResponseWithData(res, "Fetch Succeeded", dbRes);
+        // Adding HATEOAS
+        const socialwallitems = dbRes.map((item) => {
+          const newItem = item.toJSON();
+          newItem.links = {
+            self: `${
+              req.connection.encrypted ? "https" : "http"
+              // eslint-disable-next-line no-underscore-dangle
+            }://${req.headers.host}/api/socialwalls/${newItem._id}`,
+          };
+          return newItem;
+        });
+        apiResponse.successResponseWithData(
+          res,
+          "Fetch Succeeded",
+          socialwallitems
+        );
       })
       .catch((e) => {
         apiResponse.ErrorResponse(res, "DB fetch failed");
@@ -33,7 +48,21 @@ function SocialwallController(SocialwallDetails) {
 
     return SocialwallDetails.findOne(query)
       .then((dbRes) => {
-        apiResponse.successResponseWithData(res, "Fetch Succeeded", dbRes);
+        if (dbRes) {
+          // Adding HATEOAS
+          const newItem = dbRes.toJSON();
+          newItem.links = {
+            collection: `${
+              req.connection.encrypted ? "https" : "http"
+              // eslint-disable-next-line no-underscore-dangle
+            }://${req.headers.host}/api/socialwalls`,
+            collectionWithPagination: `${
+              req.connection.encrypted ? "https" : "http"
+              // eslint-disable-next-line no-underscore-dangle
+            }://${req.headers.host}/api/socialwalls?limit=10&skip=0`,
+          };
+          apiResponse.successResponseWithData(res, "Fetch Succeeded", newItem);
+        } else apiResponse.notFoundResponse(res, "No records found");
       })
       .catch((e) => {
         apiResponse.ErrorResponse(res, "DB fetch failed");
@@ -52,8 +81,7 @@ function SocialwallController(SocialwallDetails) {
       if (e) {
         apiResponse.ErrorResponse(res, "Insert failed");
         logger.error(e);
-      }
-      apiResponse.successResponseWithData(res, "Insert Succeeded", docs);
+      } else apiResponse.successResponseWithData(res, "Insert Succeeded", docs);
     });
   };
 
@@ -79,7 +107,11 @@ function SocialwallController(SocialwallDetails) {
             apiResponse.ErrorResponse(res, "Update failed");
             logger.error(e);
           } else {
-            apiResponse.successResponseWithData(res, "Update Succeeded", socialwallitem);
+            apiResponse.successResponseWithData(
+              res,
+              "Update Succeeded",
+              socialwallitem
+            );
           }
         });
       })
@@ -89,11 +121,32 @@ function SocialwallController(SocialwallDetails) {
       });
   };
 
+  const deleteSocialwallItemById = (req, res) => {
+    // Patch values
+    const query = {
+      _id: req.params.id,
+    };
+    return SocialwallDetails.deleteOne(query)
+      .then((dbStatus) => {
+        const { deletedCount } = dbStatus;
+        apiResponse.successResponseWithData(
+          res,
+          "Delete Succeeded",
+          deletedCount
+        );
+      })
+      .catch((e) => {
+        apiResponse.ErrorResponse(res, "Delete failed");
+        logger.error(e);
+      });
+  };
+
   return {
     fetchSocialwallItems,
     fetchSocialwallItemById,
     addSocialwallItems,
     patchSocialwallItem,
+    deleteSocialwallItemById,
   };
 }
 

@@ -76,6 +76,11 @@ function routes(socialwallRouter, SocialwallDetails) {
     SocialwallController(SocialwallDetails).patchSocialwallItem
   );
 
+  socialwallRouter.delete(
+    "/socialwalls/:id",
+    SocialwallController(SocialwallDetails).deleteSocialwallItemById
+  );
+
   return socialwallRouter;
 }
 
