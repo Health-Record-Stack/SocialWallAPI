@@ -1,10 +1,11 @@
 const { validationResult } = require("express-validator");
 const apiResponse = require("../helpers/apiResponse");
+const logger = require("../winston");
 
 function SocialwallController(SocialwallDetails) {
   const fetchSocialwallItems = (req, res) => {
     const query = {
-      $or1: [{ ishidden: { $exists: false } }, { ishidden: false }],
+      $or: [{ ishidden: { $exists: false } }, { ishidden: false }],
       // eslint-disable-next-line no-dupe-keys
       $or: [{ isdeleted: { $exists: false } }, { isdeleted: false }],
     };
@@ -21,6 +22,7 @@ function SocialwallController(SocialwallDetails) {
       })
       .catch((e) => {
         apiResponse.ErrorResponse(res, "DB fetch failed");
+        logger.error(e);
       });
   };
 
@@ -35,7 +37,7 @@ function SocialwallController(SocialwallDetails) {
       })
       .catch((e) => {
         apiResponse.ErrorResponse(res, "DB fetch failed");
-        throw e;
+        logger.error(e);
       });
   };
 
@@ -49,8 +51,12 @@ function SocialwallController(SocialwallDetails) {
     return SocialwallDetails.insertMany(
       req.body.socialwallitems,
       (error, docs) => {
+        if (error) {
+          apiResponse.ErrorResponse(res, "Insert failed");
+          logger.error(error);
+        }
         apiResponse.successResponseWithData(res, "Insert Succeeded", docs);
-      }
+      },
     );
   };
 

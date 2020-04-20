@@ -5,9 +5,8 @@ require("dotenv").config();
 const morgan = require("morgan");
 // const path = require("path");
 // const rfs = require("rotating-file-stream");
-
+const winston = require('./winston');
 const apiResponse = require("./helpers/apiResponse");
-const morganSettings = require("./helpers/morganConfig");
 const SocialwallDetails = require("./models/socialwalldetailModel");
 
 const app = express();
@@ -16,7 +15,7 @@ app.use(express.json());
 const socialwallRouter = require("./routes/socialwallRoutes");
 
 // setup the logger
-app.use(morgan("combined", morganSettings(__dirname)));
+app.use(morgan('combined', { stream: winston.stream, skip: (req, res) => res.statusCode < 400 }));
 
 const port = process.env.port || 11336;
 
