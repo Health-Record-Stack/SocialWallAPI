@@ -11,6 +11,7 @@ const morganSettings = require("./helpers/morganConfig");
 const SocialwallDetails = require("./models/socialwalldetailModel");
 
 const app = express();
+
 const socialwallRouter = require("./routes/socialwallRoutes");
 
 // setup the logger
@@ -36,7 +37,7 @@ mongoose
   });
 // const db = mongoose.connection;
 
-app.use("/api", socialwallRouter(SocialwallDetails));
+app.use("/api", socialwallRouter(express.Router(), SocialwallDetails));
 
 app.get("/", (req, res) => {
   res.send("Welcome to Social Wall API");
@@ -49,8 +50,4 @@ app.listen(port, () => {
   debug(`Listening on port : ${port}`);
 });
 
-function sum(x, y) {
-  return x + y;
-}
-
-sum(1, 2);
+module.exports = app;

@@ -1,9 +1,6 @@
-const express = require("express");
 const SocialwallController = require("../controllers/socialwallController");
 
-const socialwallRouter = express.Router();
-
-function routes(SocialwallDetails) {
+function routes(socialwallRouter, SocialwallDetails) {
   socialwallRouter.get(
     "/socialwalls",
     SocialwallController(SocialwallDetails).fetchSocialwallItems,
