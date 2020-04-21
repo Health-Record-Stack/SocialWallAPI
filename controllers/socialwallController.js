@@ -12,33 +12,35 @@ function SocialwallController(SocialwallDetails) {
 
     const limit = +req.query.limit || 10;
     const skip = +req.query.skip || 0;
-
-    return SocialwallDetails.find(query)
-      .limit(limit)
-      .skip(skip)
-      .sort({ createdon: -1 })
-      .then((dbRes) => {
-        // Adding HATEOAS
-        const socialwallitems = dbRes.map((item) => {
-          const newItem = item.toJSON();
-          newItem.links = {
-            self: `${
-              req.connection.encrypted ? "https" : "http"
-              // eslint-disable-next-line no-underscore-dangle
-            }://${req.headers.host}/api/socialwalls/${newItem._id}`,
-          };
-          return newItem;
-        });
-        apiResponse.successResponseWithData(
-          res,
-          "Fetch Succeeded",
-          socialwallitems
-        );
-      })
-      .catch((e) => {
-        apiResponse.ErrorResponse(res, "DB fetch failed");
-        logger.error(e);
-      });
+    SocialwallDetails.find(
+      query,
+      null,
+      { limit, skip, sort: { createdon: -1 } },
+      (e, dbRes) => {
+        if (e) {
+          apiResponse.ErrorResponse(res, "DB fetch failed");
+          logger.error(e);
+          throw e;
+        } else {
+          // Adding HATEOAS
+          const socialwallitems = dbRes.map((item) => {
+            const newItem = item.toJSON();
+            newItem.links = {
+              self: `${
+                req.connection.encrypted ? "https" : "http"
+                // eslint-disable-next-line no-underscore-dangle
+              }://${req.headers.host}/api/socialwalls/${newItem._id}`,
+            };
+            return newItem;
+          });
+          apiResponse.successResponseWithData(
+            res,
+            "Fetch Succeeded",
+            socialwallitems
+          );
+        }
+      }
+    );
   };
 
   const fetchSocialwallItemById = (req, res) => {
@@ -76,7 +78,7 @@ function SocialwallController(SocialwallDetails) {
       return apiResponse.validationError(res, errors);
     }
 
-    // Inser to server
+    // Insert to server
     return SocialwallDetails.insertMany(req.body.socialwallitems, (e, docs) => {
       if (e) {
         apiResponse.ErrorResponse(res, "Insert failed");

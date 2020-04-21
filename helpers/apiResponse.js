@@ -1,3 +1,5 @@
+const logger = require("../winston");
+
 exports.successResponse = (res, msg) => {
   const data = {
     status: 1,
@@ -12,6 +14,7 @@ exports.successResponseWithData = (res, msg, data) => {
     message: msg,
     data,
   };
+
   return res.status(200).json(resData);
 };
 
