@@ -14,10 +14,15 @@ function routes(socialwallRouter, SocialwallDetails) {
         .isArray()
         .withMessage("expecting an array of socialwallitems"),
       check("socialwallitems.*.type").custom((value) => {
-        if (!value || (value && !["Twitter", "Facebook"].includes(value))) {
-          throw new Error("type must be one of ['Twitter', 'Facebook']");
+        if (
+          !value
+          || (value
+            && !["Twitter", "Facebook", "Youtube", "LinkedIn"].includes(value))
+        ) {
+          throw new Error(
+            "type must be one of ['Twitter', 'Facebook', 'Youtube', 'LinkedIn']"
+          );
         }
-
         return true;
       }),
       check("socialwallitems.*.html").custom((value) => {
@@ -67,7 +72,7 @@ function routes(socialwallRouter, SocialwallDetails) {
       }),
       check("ishidden").custom((value) => {
         // eslint-disable-next-line no-restricted-globals
-        if (typeof value !== "boolean") {
+        if (value && typeof value !== "boolean") {
           throw new Error("ishidden is either true or false [Boolean]");
         }
         return true;

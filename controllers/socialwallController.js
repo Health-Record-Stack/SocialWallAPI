@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { validationResult } = require("express-validator");
 const apiResponse = require("../helpers/apiResponse");
 const logger = require("../winston");
@@ -22,22 +23,30 @@ function SocialwallController(SocialwallDetails) {
           logger.error(e);
           throw e;
         } else {
-          // Adding HATEOAS
-          const socialwallitems = dbRes.map((item) => {
-            const newItem = item.toJSON();
-            newItem.links = {
-              self: `${
-                req.connection.encrypted ? "https" : "http"
-                // eslint-disable-next-line no-underscore-dangle
-              }://${req.headers.host}/api/socialwalls/${newItem._id}`,
-            };
-            return newItem;
+          // Call for total items
+          SocialwallDetails.count(query, (error, count) => {
+            if (e) {
+              apiResponse.ErrorResponse(res, "DB fetch failed");
+              logger.error(error);
+            }
+
+            // Adding HATEOAS
+            const socialwallitems = dbRes.map((item) => {
+              const newItem = item.toJSON();
+              newItem.links = {
+                self: `${
+                  req.connection.encrypted ? "https" : "http"
+                  // eslint-disable-next-line no-underscore-dangle
+                }://${req.headers.host}/api/socialwalls/${newItem._id}`,
+              };
+              return newItem;
+            });
+
+            apiResponse.successResponseWithData(res, "Fetch Succeeded", {
+              socialwallitems,
+              total: count,
+            });
           });
-          apiResponse.successResponseWithData(
-            res,
-            "Fetch Succeeded",
-            socialwallitems
-          );
         }
       }
     );
@@ -77,7 +86,9 @@ function SocialwallController(SocialwallDetails) {
     if (!errors.isEmpty()) {
       return apiResponse.validationError(res, errors);
     }
-
+    req.body.socialwallitems.forEach((s) => {
+      if (!s.createdon) s.createdon = new Date();
+    });
     // Insert to server
     return SocialwallDetails.insertMany(req.body.socialwallitems, (e, docs) => {
       if (e) {
@@ -98,22 +109,19 @@ function SocialwallController(SocialwallDetails) {
     };
     return SocialwallDetails.findOne(query)
       .then((dbRes) => {
-        const socialwallitem = dbRes;
+        // const socialwallitem = dbRes;
         Object.entries(req.body).forEach((item) => {
           const key = item[0];
           const val = item[1];
-          socialwallitem[key] = val;
+          // eslint-disable-next-line no-param-reassign
+          dbRes[key] = val;
         });
-        socialwallitem.save((e) => {
+        dbRes.save((e) => {
           if (e) {
             apiResponse.ErrorResponse(res, "Update failed");
             logger.error(e);
           } else {
-            apiResponse.successResponseWithData(
-              res,
-              "Update Succeeded",
-              socialwallitem
-            );
+            apiResponse.successResponseWithData(res, "Update Succeeded", dbRes);
           }
         });
       })

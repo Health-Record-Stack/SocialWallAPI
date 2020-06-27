@@ -1,13 +1,13 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable no-undef */
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const sinon = require("sinon");
 const chai = require("chai");
 const dbHandler = require("./db-handler");
 const SocialwallController = require("../controllers/socialwallController");
 const SocialwallDetails = require("../models/socialwalldetailModel");
 const seed = require("./socialwallseed.json");
-const logger = require("../winston");
+// const logger = require("../winston");
 
 const { expect } = chai;
 /**

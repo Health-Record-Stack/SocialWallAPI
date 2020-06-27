@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  socialwallapi:
+    build: .
+    image: hrs-dev-socialwallapi:v1
+    command: npm start
+    volumes:
+      - .:/usr/src/app/
+      - /usr/src/app/node_modules
+    ports:
+      - "32000:8080"    
+    environment:
+        MONGODB_URL: mongodb://devsanishtj:1qaz!QAZ1@ds143604.mlab.com:43604/devhealthrecordstacksocialwall
+ 
