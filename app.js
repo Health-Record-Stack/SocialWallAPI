@@ -46,17 +46,20 @@ mongoose
   });
 // const db = mongoose.connection;
 
-app.use("/api", socialwallRouter(express.Router(), SocialwallDetails));
+app.use("/socialwall/api", socialwallRouter(express.Router(), SocialwallDetails));
 
-app.get("/", (req, res) => {
+app.get("/socialwall", (req, res) => {
   console.log("Welcome to Social Wall API v1");
   res.send("Welcome to Social Wall API v1");
 });
 
+app.get("/", (req, res) => {
+  console.log("Welcome to Social Wall API v1, try /socialwall");
+  res.send("Welcome to Social Wall API v1, try /socialwall");
+});
+
 // throw 404 if URL not found
-app.all("*", (req, res) =>
-  apiResponse.notFoundResponse(res, "API route not found")
-);
+app.all("*", (req, res) => apiResponse.notFoundResponse(res, "API route not found"));
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Listening on port : ${port}`);
