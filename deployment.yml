@@ -1,0 +1,33 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "hrs-dev-social-wall"
+  namespace: "hrsdev"
+  labels:
+    app: "hrs-dev-social-wall"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "hrs-dev-social-wall"
+  template:
+    metadata:
+      labels:
+        app: "hrs-dev-social-wall"
+    spec:
+      containers:
+      - name: "hrs-dev-social-wall"
+        image: "us.gcr.io/crafty-raceway-278519/hrs-dev-social-wall:v1"
+        env:
+          - name: "PORT"
+            value: "57001"	        
+        resources:          
+          requests:
+            cpu: "50m"
+        volumeMounts:
+        - name: secrets
+          mountPath: /usr/src/app/config
+      volumes:
+      - name: secrets
+        secret:
+          secretName: medicalchest-secret-configs

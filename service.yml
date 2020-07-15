@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrs-dev-social-wall
+  namespace: "hrsdev"
+spec:
+  selector:
+    app: hrs-dev-social-wall
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 57000
+      targetPort: 57001
+      nodePort: 32206
